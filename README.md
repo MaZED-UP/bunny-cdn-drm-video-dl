@@ -46,7 +46,7 @@ By default:
 * The video will be downloaded in the `~/Videos/Bunny CDN/` directory. This configuration can be changed by providing the `path` argument when instantiating a new `BunnyVideoDRM` object.
 * The video file name will be extracted from the embed page. This can be overridden by providing the `name` argument .
 
-> Please not that the video format will be always `mp4`.
+> Please note that the video format will be always `mp4`.
 
 ## Explanation
 
