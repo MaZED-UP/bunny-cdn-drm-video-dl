@@ -13,7 +13,7 @@ pip install yt-dlp
 or
 
 ```bash
-python3 -m pip install yt-dlp
+python3 -m pip yt-dlp
 ```
 
 ## Usage
@@ -43,8 +43,10 @@ after that you can run it this way:
 By default:
 
 * the highest resolution video is to be downloaded. You can change this behavior in the `main_playlist` function located under the `prepare_dl` method.
-* The video will be downloaded in the `~/Videos/Bunny CDN/` directory. This configuration can be changed by replacing the `home` value under the `paths` dictionary of `ydl_opts` dictioanary located under the `download` method.
-* The video file name will be extracted from the embed page. This can be overridden by providing the `name` argument when instantiating a new `BunnyVideoDRM` object.
+* The video will be downloaded in the `~/Videos/Bunny CDN/` directory. This configuration can be changed by providing the `path` argument when instantiating a new `BunnyVideoDRM` object.
+* The video file name will be extracted from the embed page. This can be overridden by providing the `name` argument .
+
+> Please not that the video format will be always `mp4`.
 
 ## Explanation
 
