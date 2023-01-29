@@ -13,7 +13,7 @@ pip install yt-dlp
 or
 
 ```bash
-python3 -m pip yt-dlp
+python3 -m pip install yt-dlp
 ```
 
 ## Usage
