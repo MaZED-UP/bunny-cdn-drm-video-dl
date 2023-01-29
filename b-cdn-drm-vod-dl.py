@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-import hashlib
+
 import re
 import sys
+from hashlib import md5
 from html import unescape
+from random import random
 from urllib.parse import urlparse
 
 import requests
@@ -23,8 +25,13 @@ class BunnyVideoDRM:
     }
     session = requests.session()
 
-    def __init__(self, referer: str, embed_url: str, name=''):
-        self.embed_url = embed_url
+    def __init__(self,
+                 referer='https://127.0.0.1/',
+                 embed_url='',
+                 name='',
+                 path=''):
+        self.referer = referer if referer else sys.exit(1)
+        self.embed_url = embed_url if embed_url else sys.exit(1)
         self.guid = urlparse(embed_url).path.split('/')[-1]
         self.headers = {
             'embed': {
@@ -65,24 +72,32 @@ class BunnyVideoDRM:
         for header in self.headers.values():
             header.update(self.user_agent)
         embed_response = self.session.get(embed_url,
-                                          headers=self.headers["embed"])
+                                          headers=self.headers['embed'])
         embed_page = embed_response.text
-        self.server_id = re.search(r'https://video-(.*?)\.mediadelivery\.net',
-                                   embed_page).group(1)
-        self.headers["ping|activate"].update(
+        try:
+            self.server_id = re.search(
+                r'https://video-(.*?)\.mediadelivery\.net', embed_page).group(1)
+        except AttributeError:
+            sys.exit(1)
+        self.headers['ping|activate'].update(
             {'authority': f'video-{self.server_id}.mediadelivery.net'})
         search = re.search(r'contextId=(.*?)&secret=(.*?)"', embed_page)
         self.context_id, self.secret = search.group(1), search.group(2)
-        file_name_unescaped = re.search(r'og:title" content="(.*?)"',
-                                        embed_page).group(1)
-        self.file_name = f'{name}.%(ext)s' if name else unescape(file_name_unescaped)
+        if name:
+            self.file_name = f'{name}.mp4'
+        else:
+            file_name_unescaped = re.search(r'og:title" content="(.*?)"',
+                                            embed_page).group(1)
+            file_name_escaped = unescape(file_name_unescaped)
+            self.file_name = re.sub(r'\.[^.]*$.*', '.mp4', file_name_escaped)
+        self.path = path if path else '~/Videos/Bunny CDN/'
 
     def prepare_dl(self) -> str:
 
         def ping(time: int | float, paused: str, res: str):
-            md5_hash = hashlib.md5(
-                f"{self.secret}_{self.context_id}_{time}_{paused}_{res}".encode(
-                    "utf8")).hexdigest()
+            md5_hash = md5(
+                f'{self.secret}_{self.context_id}_{time}_{paused}_{res}'.encode(
+                    'utf8')).hexdigest()
             params = {
                 'hash': md5_hash,
                 'time': time,
@@ -107,7 +122,7 @@ class BunnyVideoDRM:
                 headers=self.headers['playlist'])
             resolutions = re.findall(r'RESOLUTION=(.*)', response.text)[::-1]
             if not resolutions:
-                sys.exit()
+                sys.exit(2)
             else:
                 return resolutions[0]  # highest resolution, -1 for lowest
 
@@ -123,7 +138,7 @@ class BunnyVideoDRM:
         resolution = main_playlist()
         video_playlist()
         for i in range(0, 29, 4):  # first 28 seconds, arbitrary
-            ping(time=i + .316537,
+            ping(time=i + round(random(), 6),
                  paused='false',
                  res=resolution.split('x')[-1])
         self.session.close()
@@ -132,7 +147,7 @@ class BunnyVideoDRM:
     def download(self):
         resolution = self.prepare_dl()
         url = [
-            f"https://iframe.mediadelivery.net/{self.guid}/{resolution}/video.drm?contextId={self.context_id}"
+            f'https://iframe.mediadelivery.net/{self.guid}/{resolution}/video.drm?contextId={self.context_id}'
         ]
         ydl_opts = {
             'http_headers': {
@@ -146,9 +161,9 @@ class BunnyVideoDRM:
             'restrictfilenames': True,
             'windowsfilenames': True,
             'nopart': True,
-            "paths": {
-                "home": "~/Videos/Bunny CDN/",
-                "temp": f'.{self.file_name}/',
+            'paths': {
+                'home': self.path,
+                'temp': f'.{self.file_name}/',
             },
             'retries': float('inf'),
             'extractor_retries': float('inf'),
@@ -162,9 +177,13 @@ class BunnyVideoDRM:
 
 if __name__ == '__main__':
     video = BunnyVideoDRM(
-        referer='https://127.0.0.1/',
-        # insert your embed link below between the quotes
-        embed_url=''
+        # insert the referer between the quotes below (address of your webpage)
+        referer='',
+        # paste your embed link
+        embed_url='',
         # you can override file name, no extension
-    )
+        name="",
+        # you can override download path
+        path="")
+    # video.session.close()
     video.download()
