@@ -15,6 +15,7 @@ or
 ```bash
 python3 -m pip yt-dlp
 ```
+> It is also better to have [FFmpeg](https://ffmpeg.org) installed on your system.
 
 ## Usage
 
