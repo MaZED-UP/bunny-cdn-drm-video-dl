@@ -19,7 +19,7 @@ python3 -m pip yt-dlp
 
 ## Usage
 
-If you're willing to use the script as is, simply paste the the iframe embed page URL at the bottom where indicated between the quotes `''` (structure: [`https://iframe.mediadelivery.net/embed/{video_library_id}/{video_id}`](https://docs.bunny.net/docs/stream-embedding-videos)) as well as the webpage referer and run the script:
+If you're willing to use the script as is, simply paste the the iframe embed page URL at the bottom where indicated between the quotes `""` (structure: [`https://iframe.mediadelivery.net/embed/{video_library_id}/{video_id}`](https://docs.bunny.net/docs/stream-embedding-videos)) as well as the webpage referer and run the script:
 
 ```bash
 python3 b-cdn-drm-vod-dl.py
