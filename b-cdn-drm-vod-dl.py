@@ -24,6 +24,7 @@ class BunnyVideoDRM:
             'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36'
     }
     session = requests.session()
+    session.headers.update(user_agent)
 
     def __init__(self,
                  referer='https://127.0.0.1/',
@@ -69,8 +70,6 @@ class BunnyVideoDRM:
                 'sec-fetch-site': 'same-origin',
             }
         }
-        for header in self.headers.values():
-            header.update(self.user_agent)
         embed_response = self.session.get(embed_url,
                                           headers=self.headers['embed'])
         embed_page = embed_response.text
