@@ -93,7 +93,7 @@ class BunnyVideoDRM:
 
     def prepare_dl(self) -> str:
 
-        def ping(time: int | float, paused: str, res: str):
+        def ping(time: int, paused: str, res: str):
             md5_hash = md5(
                 f'{self.secret}_{self.context_id}_{time}_{paused}_{res}'.encode(
                     'utf8')).hexdigest()
