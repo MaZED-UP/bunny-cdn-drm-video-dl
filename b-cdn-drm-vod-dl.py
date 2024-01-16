@@ -136,7 +136,7 @@ class BunnyVideoDRM:
         activate()
         resolution = main_playlist()
         video_playlist()
-        for i in range(0, 29, 4):  # first 28 seconds, arbitrary
+        for i in range(0, 29, 4):  # first 28 seconds, arbitrary (check issue#11)
             ping(time=i + round(random(), 6),
                  paused='false',
                  res=resolution.split('x')[-1])
